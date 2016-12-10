@@ -1,0 +1,14 @@
+html, body {
+  margin: 0;
+  height: 100%;
+}
+
+#root {
+  height: 100vh;
+}
+
+svg {
+  width: 100vw;
+  height: 100vh;
+  background-color: #2e3136;
+}
