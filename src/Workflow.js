@@ -15,7 +15,7 @@ const testState = {
   },
   links: {
     meta: {
-      nextId: 1
+      nextId: 2
     },
     items: {
       1: {
