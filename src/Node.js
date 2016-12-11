@@ -65,19 +65,19 @@ class Node extends Component {
     const width = 200;
     const height = 50;
     const input = {
-      x,
-      y: y + height / 2
+      x: 0,
+      y: height / 2
     }
     const output = {
-      x: x + width,
-      y: y + height / 2
+      x: width,
+      y: height / 2
     }
 
     return (
-      <g>
+      <g transform={`translate(${x},${y})`}>
         <DraggableCore onDrag={this.handleDrag}>
           <rect
-            x={x} y={y} rx={5}
+            rx={5}
             width={width} height={height}
             {...styles.node} />
         </DraggableCore>
