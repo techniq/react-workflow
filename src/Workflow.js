@@ -6,21 +6,26 @@ import Canvas from './Canvas';
 const testState = {
   nodes: {
     meta: {
-      nextId: 3
+      nextId: 4
     },
     items: {
       1: { label: 'node 1', x: 100, y: 100 },
-      2: { label: 'node 2', x: 500, y: 200 }
+      2: { label: 'node 2', x: 500, y: 200 },
+      3: { label: 'node 3', x: 900, y: 300 }
     }
   },
   links: {
     meta: {
-      nextId: 2
+      nextId: 3
     },
     items: {
       1: {
-        start: { x: 300, y: 125 },
-        end:   { x: 500, y: 225 }
+        start: { x: 300, y: 125, output: 1 },
+        end:   { x: 500, y: 225, input: 2 }
+      },
+      2: {
+        start: { x: 700, y: 225, output: 2 },
+        end:   { x: 900, y: 325, input: 3 }
       }
     }
   },
@@ -58,21 +63,54 @@ const reducer = (state = testState, action) => {
 
     case 'MOVE_NODE': {
       const { id, deltaX, deltaY } = action.payload;
-      const items = state.nodes.items;
-      const item = items[id];
+      const nodeItems = state.nodes.items;
+      const node = nodeItems[id];
+
+      // Update connected links to node being moved
+      const linkItems = Object.keys(state.links.items).reduce((result, linkId) => {
+        const link = state.links.items[linkId];
+        if (link.start.input == id || link.start.output == id) {
+          result[linkId] = {
+            ...link,
+            start: {
+              ...link.start,
+              x: link.start.x + deltaX, 
+              y: link.start.y + deltaY
+            }
+          }
+        } else if (link.end.input == id || link.end.output == id) {
+          result[linkId] = {
+            ...link,
+            end: {
+              ...link.end,
+              x: link.end.x + deltaX, 
+              y: link.end.y + deltaY
+            }
+          }
+        } else {
+          // unaffected
+          result[linkId] = link;
+        }
+
+        return result;
+      }, {})
 
       return {
         ...state,
         nodes: {
           ...state.nodes,
           items: {
-            ...items,
+            ...nodeItems,
             [id]: {
-              ...item,
-              x: item.x + deltaX,
-              y: item.y + deltaY
+              ...node,
+              x: node.x + deltaX,
+              y: node.y + deltaY
             }
           }
+        },
+        links: {
+          ...state.links,
+          items: linkItems
         }
       }
     }
