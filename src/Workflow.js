@@ -15,7 +15,7 @@ const testState = {
   },
   links: {
     meta: {
-      nextId: 1 
+      nextId: 1
     },
     items: {}
   },
@@ -34,6 +34,7 @@ const reducer = (state = testState, action) => {
         nodes: {
           ...state.nodes,
           meta: {
+            ...state.nodes.meta,
             nextId: state.nodes.meta.nextId + 1
           },
           items: {
@@ -64,6 +65,7 @@ const reducer = (state = testState, action) => {
         links: {
           ...state.links,
           meta: {
+            ...state.links.meta,
             nextId: state.links.meta.nextId + 1
           },
           items: {

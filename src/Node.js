@@ -28,48 +28,78 @@ class Node extends Component {
     })
   };
 
-  handleAddLink = (e) => {
+  handleAddLink = (e, { x, y }) => {
     e.stopPropagation();
+
+    // Capture Id to be given to the link being added as it will be used while being dragged out of connector
+    this.newLinkId = this.props.nextLinkId;
 
     this.props.dispatch({
       type: 'ADD_LINK',
       payload: {
-        start: {
-          x: e.nativeEvent.offsetX,
-          y: e.nativeEvent.offsetY
-        }, 
-        end: {
-          x: e.nativeEvent.offsetX + 100,
-          y: e.nativeEvent.offsetY + 100
-        } 
+        start: { x, y }, 
+        end: { x, y }
       }
     })
+  };
+
+  handleMoveLink = (name, { deltaX, deltaY }) => {
+    this.props.dispatch({
+      type: 'MOVE_LINK',
+      payload: {
+        id: this.newLinkId,
+        start: {
+          deltaX: name === 'start' || name === 'line' ? deltaX : 0,
+          deltaY: name === 'start' || name === 'line' ? deltaY : 0,
+        },
+        end: {
+          deltaX: name === 'end' || name === 'line' ? deltaX : 0,
+          deltaY: name === 'end' || name === 'line' ? deltaY : 0,
+        }
+      }
+    });
   };
 
   render() {
     const { x, y } = this.props;
     const width = 200;
     const height = 50;
+    const input = {
+      x,
+      y: y + height / 2
+    }
+    const output = {
+      x: x + width,
+      y: y + height / 2
+    }
 
     return (
-      <DraggableCore onDrag={this.handleDrag}>
-        <g>
+      <g>
+        <DraggableCore onDrag={this.handleDrag}>
           <rect
             x={x} y={y} rx={5}
-            {...styles.node}
-            width={width} height={height}/>
+            width={width} height={height}
+            {...styles.node} />
+        </DraggableCore>
+
+        <DraggableCore onStart={(e) => this.handleAddLink(e, input)} onDrag={(e, data) => this.handleMoveLink('start', data)}>
           <circle
-            cx={x} cy={y + height / 2} r={5}
-            {...styles.input}
-            onMouseDown={this.handleAddLink} />
+            cx={input.x} cy={input.y} r={5}
+            {...styles.input} />
+        </DraggableCore>
+
+        <DraggableCore onStart={(e) => this.handleAddLink(e, output)} onDrag={(e, data) => this.handleMoveLink('end', data)}>
           <circle
-            cx={x + width} cy={y + height / 2} r={5}
-            {...styles.output}
-            onMouseDown={this.handleAddLink} />
-        </g>
-      </DraggableCore>
+            cx={output.x} cy={output.y} r={5}
+            {...styles.output} />
+        </DraggableCore>
+      </g>
     )
   }
 }
 
-export default connect()(Node)
+export default connect(state => {
+  return {
+    nextLinkId: state.links.meta.nextId,
+  }
+})(Node);
