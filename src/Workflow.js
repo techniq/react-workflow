@@ -1,5 +1,5 @@
-import React, { Component, PropTypes } from 'react';
-import { Provider, connect } from 'react-redux';
+import React, { Component } from 'react';
+import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import Canvas from './Canvas';
 
@@ -21,10 +21,10 @@ const testState = {
   },
 }
 
-const defaultState = {
-  nodes: [],
-  links: []
-}
+// const defaultState = {
+//   nodes: [],
+//   links: []
+// }
 
 const reducer = (state = testState, action) => {
   switch (action.type) {
