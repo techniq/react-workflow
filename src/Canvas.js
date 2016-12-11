@@ -34,27 +34,8 @@ class Canvas extends Component {
           </filter>
         </defs>
 
-        {Object.keys(links).map(linkId => {
-          const link = links[linkId];
-          return (
-            <Link
-              id={linkId}
-              start={link.start}
-              end={link.end}
-              key={`link-${linkId}`} />
-          )
-        })}
-
-        {Object.keys(nodes).map(nodeId => {
-          const node = nodes[nodeId];
-          return (
-            <Node
-              id={nodeId}
-              x={node.x} y={node.y}
-              key={`node-${nodeId}`} />
-          )
-        })}
-
+        {Object.keys(links).map(linkId => <Link id={linkId} key={`link-${linkId}`} {...links[linkId]} />)}
+        {Object.keys(nodes).map(nodeId => <Node id={nodeId} key={`node-${nodeId}`} {...nodes[nodeId]} />)}
         {children}
       </svg>
     )
