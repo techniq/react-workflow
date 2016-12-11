@@ -17,18 +17,29 @@ const testState = {
     meta: {
       nextId: 1
     },
-    items: {}
+    items: {
+      1: {
+        start: { x: 300, y: 125 },
+        end:   { x: 500, y: 225 }
+      }
+    }
   },
 }
 
 // const defaultState = {
-//   nodes: [],
-//   links: []
+//   nodes: {
+//     meta: {},
+//     items: {}
+//   },
+//   links: {
+//     meta: {},
+//     items: {}
+//   }
 // }
 
 const reducer = (state = testState, action) => {
   switch (action.type) {
-    case 'ADD_NODE': 
+    case 'ADD_NODE': {
       return {
         ...state,
         nodes: {
@@ -43,23 +54,28 @@ const reducer = (state = testState, action) => {
           }
         }
       }
+    }
 
-    case 'MOVE_NODE':
+    case 'MOVE_NODE': {
+      const items = state.nodes.items;
+      const { id, deltaX, deltaY } = action.payload;
+
       return {
         ...state,
         nodes: {
           ...state.nodes,
           items: {
-            ...state.nodes.items,
-            [action.payload.id]: {
-              x: state.nodes.items[action.payload.id].x + action.payload.deltaX,
-              y: state.nodes.items[action.payload.id].y + action.payload.deltaY
+            ...items,
+            [id]: {
+              x: items[id].x + deltaX,
+              y: items[id].y + deltaY
             }
           }
         }
       }
+    }
 
-    case 'ADD_LINK': 
+    case 'ADD_LINK': {
       return {
         ...state,
         links: {
@@ -74,27 +90,32 @@ const reducer = (state = testState, action) => {
           }
         }
       }
+    }
 
-    case 'MOVE_LINK':
+    case 'MOVE_LINK': {
+      const items = state.links.items;
+      const { id, start, end } = action.payload;
+
       return {
         ...state,
         links: {
           ...state.links,
           items: {
-            ...state.links.items,
-            [action.payload.id]: {
+            ...items,
+            [id]: {
               start: {
-                x: state.links.items[action.payload.id].start.x + action.payload.start.deltaX,
-                y: state.links.items[action.payload.id].start.y + action.payload.start.deltaY
+                x: items[id].start.x + start.deltaX,
+                y: items[id].start.y + start.deltaY
               },
               end: {
-                x: state.links.items[action.payload.id].end.x + action.payload.end.deltaX,
-                y: state.links.items[action.payload.id].end.y + action.payload.end.deltaY
+                x: items[id].end.x + end.deltaX,
+                y: items[id].end.y + end.deltaY
               }
             }
           }
         }
       }
+    }
 
     default:
       return state;
@@ -104,7 +125,6 @@ const reducer = (state = testState, action) => {
 const store = createStore(reducer, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
 
 class Workflow extends Component {
-
   render() {
     return (
       <Provider store={store}>
