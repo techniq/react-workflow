@@ -9,8 +9,8 @@ const testState = {
       nextId: 3
     },
     items: {
-      1: { x: 100, y: 100 },
-      2: { x: 500, y: 200 }
+      1: { label: 'node 1', x: 100, y: 100 },
+      2: { label: 'node 2', x: 500, y: 200 }
     }
   },
   links: {

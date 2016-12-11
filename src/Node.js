@@ -12,6 +12,10 @@ const styles = {
   },
   output: {
     fill: '#F44336'
+  },
+  label: {
+    fill: 'white',
+    fontFamily: 'arial'
   }
 }
 
@@ -61,7 +65,7 @@ class Node extends Component {
   };
 
   render() {
-    const { x, y } = this.props;
+    const { x, y, label } = this.props;
     const width = 200;
     const height = 50;
     const input = {
@@ -71,6 +75,10 @@ class Node extends Component {
     const output = {
       x: width,
       y: height / 2
+    }
+    const text = {
+      x: 20,
+      y: 30
     }
 
     return (
@@ -93,6 +101,8 @@ class Node extends Component {
             cx={output.x} cy={output.y} r={5}
             {...styles.output} />
         </DraggableCore>
+
+        <text x={text.x} y={text.y} {...styles.label}>{label}</text>
       </g>
     )
   }
