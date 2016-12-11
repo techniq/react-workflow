@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
 import { DraggableCore } from 'react-draggable';
 
 const styles = {
@@ -15,41 +16,38 @@ const styles = {
 }
 
 class Node extends Component {
-  state = {
-    x: this.props.x,
-    y: this.props.y
-  };
-
-  static contextTypes = {
-    canvas: PropTypes.object.isRequired
-  }
-
+  
   handleDrag = (e, { deltaX, deltaY }) => {
-    // console.log('drag', e, data);
-    this.setState({
-      x: this.state.x + deltaX,
-      y: this.state.y + deltaY
-    });
+    this.props.dispatch({
+      type: 'MOVE_NODE',
+      payload: {
+        id: this.props.id,
+        deltaX,
+        deltaY
+      }
+    })
   };
 
   handleAddLink = (e) => {
     e.stopPropagation();
 
-    this.context.canvas.addLink({
-      start: {
-        x: e.nativeEvent.offsetX,
-        y: e.nativeEvent.offsetY
-      }, 
-      end: {
-        x: e.nativeEvent.offsetX + 100,
-        y: e.nativeEvent.offsetY + 100
-      } 
+    this.props.dispatch({
+      type: 'ADD_LINK',
+      payload: {
+        start: {
+          x: e.nativeEvent.offsetX,
+          y: e.nativeEvent.offsetY
+        }, 
+        end: {
+          x: e.nativeEvent.offsetX + 100,
+          y: e.nativeEvent.offsetY + 100
+        } 
+      }
     })
-
   };
 
   render() {
-    const { x, y } = this.state;
+    const { x, y } = this.props;
     const width = 200;
     const height = 50;
 
@@ -74,4 +72,4 @@ class Node extends Component {
   }
 }
 
-export default Node
+export default connect()(Node)

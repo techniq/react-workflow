@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { DraggableCore } from 'react-draggable';
 
 const styles = {
@@ -13,32 +14,26 @@ const styles = {
 }
 
 class Link extends Component {
-  state = {
-    start: this.props.start,
-    end: this.props.end,
-  };
 
   handleDrag = (name, { deltaX, deltaY }) => {
-    if (name === 'start' || name === 'line') {
-      this.setState({
+    this.props.dispatch({
+      type: 'MOVE_LINK',
+      payload: {
+        id: this.props.id,
         start: {
-          x: this.state.start.x + deltaX,
-          y: this.state.start.y + deltaY
-        }
-      });
-    }
-    if (name === 'end' || name === 'line') {
-      this.setState({
+          deltaX: name === 'start' || name === 'line' ? deltaX : 0,
+          deltaY: name === 'start' || name === 'line' ? deltaY : 0,
+        },
         end: {
-          x: this.state.end.x + deltaX,
-          y: this.state.end.y + deltaY
+          deltaX: name === 'end' || name === 'line' ? deltaX : 0,
+          deltaY: name === 'end' || name === 'line' ? deltaY : 0,
         }
-      });
-    }
+      }
+    });
   };
 
   render() {
-    const { start, end } = this.state;
+    const { start, end } = this.props;
     const midX = ((end.x - start.x) / 2) + start.x;
     const pathData = `
       M ${start.x} ${start.y}
@@ -59,14 +54,9 @@ class Link extends Component {
         <DraggableCore onDrag={(e, data) => this.handleDrag('end', data)}>
           <circle r={5} cx={end.x} cy={end.y} {...styles.circle} />
         </DraggableCore>
-
-        {/*
-        <circle r="5" cx={midX} cy={start.y} />
-        <circle r="5" cx={midX} cy={end.y} />
-        */}
       </g>
     )
   }
 }
 
-export default Link
+export default connect()(Link)
