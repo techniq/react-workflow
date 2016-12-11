@@ -32,8 +32,10 @@ class Node extends Component {
     })
   };
 
-  handleAddLink = (e, { x, y }) => {
+  handleAddLink = (e, { x: connectorX, y: connectorY }) => {
     e.stopPropagation();
+
+    const { x, y } = this.props;
 
     // Capture Id to be given to the link being added as it will be used while being dragged out of connector
     this.newLinkId = this.props.nextLinkId;
@@ -41,8 +43,14 @@ class Node extends Component {
     this.props.dispatch({
       type: 'ADD_LINK',
       payload: {
-        start: { x, y }, 
-        end: { x, y }
+        start: {
+          x: x + connectorX,
+          y: y + connectorY
+        }, 
+        end: {
+          x: x + connectorX,
+          y: y + connectorY
+        }
       }
     })
   };
