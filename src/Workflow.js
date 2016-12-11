@@ -57,8 +57,9 @@ const reducer = (state = testState, action) => {
     }
 
     case 'MOVE_NODE': {
-      const items = state.nodes.items;
       const { id, deltaX, deltaY } = action.payload;
+      const items = state.nodes.items;
+      const item = items[id];
 
       return {
         ...state,
@@ -67,8 +68,9 @@ const reducer = (state = testState, action) => {
           items: {
             ...items,
             [id]: {
-              x: items[id].x + deltaX,
-              y: items[id].y + deltaY
+              ...item,
+              x: item.x + deltaX,
+              y: item.y + deltaY
             }
           }
         }
@@ -93,8 +95,9 @@ const reducer = (state = testState, action) => {
     }
 
     case 'MOVE_LINK': {
-      const items = state.links.items;
       const { id, start, end } = action.payload;
+      const items = state.links.items;
+      const item = items[id];
 
       return {
         ...state,
@@ -103,13 +106,14 @@ const reducer = (state = testState, action) => {
           items: {
             ...items,
             [id]: {
+              ...item,
               start: {
-                x: items[id].start.x + start.deltaX,
-                y: items[id].start.y + start.deltaY
+                x: item.start.x + start.deltaX,
+                y: item.start.y + start.deltaY
               },
               end: {
-                x: items[id].end.x + end.deltaX,
-                y: items[id].end.y + end.deltaY
+                x: item.end.x + end.deltaX,
+                y: item.end.y + end.deltaY
               }
             }
           }
