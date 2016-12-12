@@ -4,7 +4,7 @@ import { DraggableCore } from 'react-draggable';
 
 const styles = {
   node: {
-    fill: '#373A40',
+    fill: '#474B51',
     filter: 'url(#dropshadow)',
   },
   input: {
