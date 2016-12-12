@@ -35,7 +35,7 @@ class Link extends Component {
   render() {
     const { start, end } = this.props;
     const midX = ((end.x - start.x) / 2) + start.x;
-    const midOffset = (start.x > end.x) ? (start.x - end.x) * 1.5 : 0;
+    const midOffset = (start.x > end.x) ? (start.x - end.x) * 1.5 + 30 : 30;
     const pathData = `
       M ${start.x} ${start.y}
       C ${midX + midOffset} ${start.y} ${midX - midOffset} ${end.y}
