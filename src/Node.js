@@ -72,6 +72,15 @@ class Node extends Component {
     });
   };
 
+  handleAttachLink = () => {
+    this.props.dispatch({
+      type: 'ATTACH_LINK',
+      payload: {
+        id: this.newLinkId
+      }
+    });
+  };
+
   handleDoubleClick = (e) => {
     e.stopPropagation();
     this.props.dispatch({
@@ -109,13 +118,21 @@ class Node extends Component {
             {...styles.node} />
         </DraggableCore>
 
-        <DraggableCore onStart={(e) => this.handleAddLink(e, input)} onDrag={(e, data) => this.handleMoveLink('start', data)}>
+        <DraggableCore
+          onStart={(e) => this.handleAddLink(e, input)}
+          onDrag={(e, data) => this.handleMoveLink('start', data)}
+          onStop={this.handleAttachLink}
+        >
           <circle
             cx={input.x} cy={input.y} r={5}
             {...styles.input} />
         </DraggableCore>
 
-        <DraggableCore onStart={(e) => this.handleAddLink(e, output)} onDrag={(e, data) => this.handleMoveLink('end', data)}>
+        <DraggableCore
+          onStart={(e) => this.handleAddLink(e, output)}
+          onDrag={(e, data) => this.handleMoveLink('end', data)}
+          onStop={this.handleAttachLink}
+        >
           <circle
             cx={output.x} cy={output.y} r={5}
             {...styles.output} />

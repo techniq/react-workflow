@@ -189,6 +189,70 @@ const reducer = (state = testState, action) => {
       }
     }
 
+    case 'ATTACH_LINK': {
+      const { id } = action.payload;
+      const link = state.links.items[id];
+
+      // Check each node to see if link's ends are close enough to attach
+      const ATTACH_THRESHOLD = 10;
+      // TODO: Do not hard code width/height to determine location of node's connection points
+      const NODE_WIDTH = 200;
+      const NODE_HEIGHT = 50;
+
+      const startNodeId = Object.keys(state.nodes.items)
+        .filter(nodeId => {
+          const node = state.nodes.items[nodeId];
+          return (
+            Math.abs(link.start.x - node.x - NODE_WIDTH) < ATTACH_THRESHOLD && 
+            Math.abs(link.start.y - node.y - (NODE_HEIGHT / 2)) < ATTACH_THRESHOLD
+          )
+        })[0];
+
+      const endNodeId = Object.keys(state.nodes.items)
+        .filter(nodeId => {
+          const node = state.nodes.items[nodeId];
+          return (
+            Math.abs(link.end.x - node.x) < ATTACH_THRESHOLD &&
+            Math.abs(link.end.y - node.y - (NODE_HEIGHT / 2)) < ATTACH_THRESHOLD
+          )
+        })[0];
+
+      let linkItems;
+      if (startNodeId && endNodeId) {
+        const startNode = state.nodes.items[startNodeId];
+        const endNode = state.nodes.items[endNodeId];
+
+        linkItems = {
+          ...state.links.items,
+          [id]: {
+            ...link,
+            start: {
+              x: startNode.x + NODE_WIDTH,
+              y: startNode.y + (NODE_HEIGHT / 2),
+              output: startNodeId
+            },
+            end: {
+              x: endNode.x,
+              y: endNode.y + (NODE_HEIGHT / 2),
+              input: endNodeId
+            }
+          }
+        };
+      } else {
+        // remove link as not attached on one side
+        linkItems = {...state.links.items};
+        delete linkItems[id];
+      }
+
+      return {
+        ...state,
+        links: {
+          ...state.links,
+          items: linkItems
+        }
+      }
+    }
+
     default:
       return state;
   }
