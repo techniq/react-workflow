@@ -115,6 +115,36 @@ const reducer = (state = testState, action) => {
       }
     }
 
+    case 'REMOVE_NODE': {
+      const { id } = action.payload;
+      const nodeItems = {...state.nodes.items};
+      delete nodeItems[id];
+
+      // Delete links connected to removed node
+      const linkItems = Object.keys(state.links.items).reduce((result, linkId) => {
+        const link = state.links.items[linkId];
+        if (link.start.input == id || link.start.output == id || link.end.input == id || link.end.output == id) {
+          // remove link
+        } else {
+          result[linkId] = link;
+        }
+
+        return result;
+      }, {})
+
+      return {
+        ...state,
+        nodes: {
+          ...state.nodes,
+          items: nodeItems
+        },
+        links: {
+          ...state.links,
+          items: linkItems
+        }
+      }
+    }
+
     case 'ADD_LINK': {
       return {
         ...state,

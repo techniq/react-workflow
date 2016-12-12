@@ -72,6 +72,16 @@ class Node extends Component {
     });
   };
 
+  handleDoubleClick = (e) => {
+    e.stopPropagation();
+    this.props.dispatch({
+      type: 'REMOVE_NODE',
+      payload: {
+        id: this.props.id,
+      }
+    });
+  };
+
   render() {
     const { x, y, label } = this.props;
     const width = 200;
@@ -95,6 +105,7 @@ class Node extends Component {
           <rect
             rx={5}
             width={width} height={height}
+            onDoubleClick={this.handleDoubleClick}
             {...styles.node} />
         </DraggableCore>
 
