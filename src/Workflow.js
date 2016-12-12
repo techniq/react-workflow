@@ -134,24 +134,24 @@ const reducer = (state = testState, action) => {
 
     case 'MOVE_LINK': {
       const { id, start, end } = action.payload;
-      const items = state.links.items;
-      const item = items[id];
+      const linkItems = state.links.items;
+      const link = linkItems[id];
 
       return {
         ...state,
         links: {
           ...state.links,
           items: {
-            ...items,
+            ...linkItems,
             [id]: {
-              ...item,
+              ...link,
               start: {
-                x: item.start.x + start.deltaX,
-                y: item.start.y + start.deltaY
+                x: link.start.x + start.deltaX,
+                y: link.start.y + start.deltaY
               },
               end: {
-                x: item.end.x + end.deltaX,
-                y: item.end.y + end.deltaY
+                x: link.end.x + end.deltaX,
+                y: link.end.y + end.deltaY
               }
             }
           }
