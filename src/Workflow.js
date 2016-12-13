@@ -20,12 +20,12 @@ const testState = {
     },
     items: {
       1: {
-        start: { x: 300, y: 125, output: 1 },
-        end:   { x: 500, y: 225, input: 2 }
+        start: { x: 300, y: 125, node: 1 },
+        end:   { x: 500, y: 225, node: 2 }
       },
       2: {
-        start: { x: 700, y: 225, output: 2 },
-        end:   { x: 900, y: 325, input: 3 }
+        start: { x: 700, y: 225, node: 2 },
+        end:   { x: 900, y: 325, node: 3 }
       }
     }
   },
@@ -69,7 +69,7 @@ const reducer = (state = testState, action) => {
       // Update connected links to node being moved
       const linkItems = Object.keys(state.links.items).reduce((result, linkId) => {
         const link = state.links.items[linkId];
-        if (link.start.input == id || link.start.output == id) {
+        if (link.start.node == id) {
           result[linkId] = {
             ...link,
             start: {
@@ -78,7 +78,7 @@ const reducer = (state = testState, action) => {
               y: link.start.y + deltaY
             }
           }
-        } else if (link.end.input == id || link.end.output == id) {
+        } else if (link.end.node == id) {
           result[linkId] = {
             ...link,
             end: {
@@ -123,7 +123,7 @@ const reducer = (state = testState, action) => {
       // Delete links connected to removed node
       const linkItems = Object.keys(state.links.items).reduce((result, linkId) => {
         const link = state.links.items[linkId];
-        if (link.start.input == id || link.start.output == id || link.end.input == id || link.end.output == id) {
+        if (link.start.node == id || link.end.node == id) {
           // remove link
         } else {
           result[linkId] = link;
@@ -229,12 +229,12 @@ const reducer = (state = testState, action) => {
             start: {
               x: startNode.x + NODE_WIDTH,
               y: startNode.y + (NODE_HEIGHT / 2),
-              output: startNodeId
+              node: startNodeId
             },
             end: {
               x: endNode.x,
               y: endNode.y + (NODE_HEIGHT / 2),
-              input: endNodeId
+              node: endNodeId
             }
           }
         };
