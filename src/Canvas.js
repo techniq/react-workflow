@@ -19,25 +19,13 @@ class Canvas extends Component {
     const { nodes, links, children } = this.props;
 
     return (
-      <svg onDoubleClick={this.handleDoubleClick}>
-        <defs>
-          <filter id="dropshadow" height="130%">
-            <feGaussianBlur in="SourceAlpha" stdDeviation="3"/> 
-            <feOffset dx="3" dy="3" result="offsetblur"/>
-            <feComponentTransfer>
-              <feFuncA type="linear" slope="0.2"/>
-            </feComponentTransfer>
-            <feMerge> 
-              <feMergeNode/>
-              <feMergeNode in="SourceGraphic"/> 
-            </feMerge>
-          </filter>
-        </defs>
-
-        {Object.keys(links).map(linkId => <Link id={linkId} key={`link-${linkId}`} {...links[linkId]} />)}
+      <div>
+        <svg onDoubleClick={this.handleDoubleClick}>
+          {Object.keys(links).map(linkId => <Link id={linkId} key={`link-${linkId}`} {...links[linkId]} />)}
+        </svg>
         {Object.keys(nodes).map(nodeId => <Node id={nodeId} key={`node-${nodeId}`} {...nodes[nodeId]} />)}
         {children}
-      </svg>
+      </div>
     )
   }
 }
