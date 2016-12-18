@@ -16,7 +16,7 @@ class Canvas extends Component {
   };
 
   render() {
-    const { nodes, links, children } = this.props;
+    const { nodes, links } = this.props;
 
     return (
       <div>
@@ -24,7 +24,6 @@ class Canvas extends Component {
           {Object.keys(links).map(linkId => <Link id={linkId} key={`link-${linkId}`} {...links[linkId]} />)}
         </svg>
         {Object.keys(nodes).map(nodeId => <Node id={nodeId} key={`node-${nodeId}`} {...nodes[nodeId]} />)}
-        {children}
       </div>
     )
   }

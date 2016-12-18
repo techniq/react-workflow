@@ -2,47 +2,53 @@ import React, { Component } from 'react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import Canvas from './Canvas';
+import Node from './Node';
+import Link from './Link';
 
-const testState = {
+// const testState = {
+//   nodes: {
+//     meta: {
+//       nextId: 4
+//     },
+//     items: {
+//       1: { label: 'node 1', x: 100, y: 100 },
+//       2: { label: 'node 2', x: 500, y: 200 },
+//       3: { label: 'node 3', x: 900, y: 300 }
+//     }
+//   },
+//   links: {
+//     meta: {
+//       nextId: 3
+//     },
+//     items: {
+//       1: {
+//         start: { x: 300, y: 125, node: 1 },
+//         end:   { x: 500, y: 225, node: 2 }
+//       },
+//       2: {
+//         start: { x: 700, y: 225, node: 2 },
+//         end:   { x: 900, y: 325, node: 3 }
+//       }
+//     }
+//   },
+// }
+
+const defaultState = {
   nodes: {
     meta: {
-      nextId: 4
+      nextId: 1
     },
-    items: {
-      1: { label: 'node 1', x: 100, y: 100 },
-      2: { label: 'node 2', x: 500, y: 200 },
-      3: { label: 'node 3', x: 900, y: 300 }
-    }
+    items: {}
   },
   links: {
     meta: {
-      nextId: 3
+      nextId: 1
     },
-    items: {
-      1: {
-        start: { x: 300, y: 125, node: 1 },
-        end:   { x: 500, y: 225, node: 2 }
-      },
-      2: {
-        start: { x: 700, y: 225, node: 2 },
-        end:   { x: 900, y: 325, node: 3 }
-      }
-    }
-  },
+    items: {}
+  }
 }
 
-// const defaultState = {
-//   nodes: {
-//     meta: {},
-//     items: {}
-//   },
-//   links: {
-//     meta: {},
-//     items: {}
-//   }
-// }
-
-const reducer = (state = testState, action) => {
+const reducer = (state = defaultState, action) => {
   switch (action.type) {
     case 'ADD_NODE': {
       return {
@@ -261,6 +267,22 @@ const reducer = (state = testState, action) => {
 const store = createStore(reducer, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
 
 class Workflow extends Component {
+  componentWillMount() {
+    React.Children.forEach(this.props.children, child => {
+      if (child.type.WrappedComponent.name === Node.WrappedComponent.name) {
+        store.dispatch({
+          type: 'ADD_NODE',
+          payload: { ...child.props }
+        })
+      } else if (child.type.WrappedComponent.name === Link.WrappedComponent.name) {
+        store.dispatch({
+          type: 'ADD_LINK',
+          payload: { ...child.props }
+        })
+      }
+    })
+  }
+
   render() {
     return (
       <Provider store={store}>
