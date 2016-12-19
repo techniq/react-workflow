@@ -1,8 +1,12 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { DraggableCore } from 'react-draggable';
 
 class Port extends Component {
+
+  static contextTypes = {
+    node: PropTypes.object
+  }
   
   handleStart = (e, coords) => {
     e.stopPropagation();
@@ -13,6 +17,7 @@ class Port extends Component {
     this.props.dispatch({
       type: 'ADD_LINK',
       payload: {
+        id: this.newLinkId,
         start: coords,
         end: coords
       }
@@ -46,35 +51,29 @@ class Port extends Component {
   };
 
   render() {
-    const { type, nodeBox } = this.props;
-    const radius = 5;
-    const isInput = type === 'input';
+    const { x, y, type, children } = this.props;
+    const { node } = this.context;
+
     const styles = {
       position: 'absolute',
+      left: x,
+      top: y
     };
 
-    // TODO: These will be set as part by user's child component
-    const additionalStyles = {
-      backgroundColor: isInput ? '#8BC34A' : '#F44336',
-      borderRadius: '50%',
-      width: radius * 2,
-      height: radius * 2,
-      left: isInput ? -radius : nodeBox.width - radius,
-      top: (nodeBox.height / 2) - radius,
-    }
-
     const coords = {
-      x: isInput ? nodeBox.x : nodeBox.x + nodeBox.width,
-      y: nodeBox.y + (nodeBox.height / 2)
+      x: node.props.x + x,
+      y: node.props.y + y
     };
 
     return (
       <DraggableCore
         onStart={(e) => this.handleStart(e, coords)}
-        onDrag={(e, data) => this.handleDrag(isInput ? 'start' : 'end', data)}
+        onDrag={(e, data) => this.handleDrag(type === 'input' ? 'start' : 'end', data)}
         onStop={this.handleStop}
       >
-        <div style={{...styles, ...additionalStyles}} />
+        <div style={styles}>
+          {children}
+        </div>
       </DraggableCore>
     );
   }

@@ -51,6 +51,7 @@ const defaultState = {
 const reducer = (state = defaultState, action) => {
   switch (action.type) {
     case 'ADD_NODE': {
+      const { id, ...props } = action.payload;
       return {
         ...state,
         nodes: {
@@ -61,7 +62,7 @@ const reducer = (state = defaultState, action) => {
           },
           items: {
             ...state.nodes.items,
-            [state.nodes.meta.nextId]: action.payload
+            [id]: props
           }
         }
       }
@@ -152,6 +153,7 @@ const reducer = (state = defaultState, action) => {
     }
 
     case 'ADD_LINK': {
+      const { id, ...props } = action.payload;
       return {
         ...state,
         links: {
@@ -162,7 +164,7 @@ const reducer = (state = defaultState, action) => {
           },
           items: {
             ...state.links.items,
-            [state.links.meta.nextId]: action.payload
+            [id]: props
           }
         }
       }
@@ -272,12 +274,18 @@ class Workflow extends Component {
       if (child.type.WrappedComponent.name === Node.WrappedComponent.name) {
         store.dispatch({
           type: 'ADD_NODE',
-          payload: { ...child.props }
+          payload: {
+            id: child.id,
+            ...child.props
+          }
         })
       } else if (child.type.WrappedComponent.name === Link.WrappedComponent.name) {
         store.dispatch({
           type: 'ADD_LINK',
-          payload: { ...child.props }
+          payload: {
+            id: child.id,
+            ...child.props
+          }
         })
       }
     })
@@ -286,7 +294,9 @@ class Workflow extends Component {
   render() {
     return (
       <Provider store={store}>
-        <Canvas />
+        <Canvas>
+          {this.props.children}
+        </Canvas>
       </Provider>
     )
   }
