@@ -47,7 +47,7 @@ class App extends Component {
     return (
       <Workflow> 
       
-        <Node label="node 1" x={100} y={100} width={nodeWidth} height={nodeHeight} id={1}>
+        <Node x={100} y={100} id={1}>
           <div style={nodeStyles}>
             Node 1a
             <InputPort />
@@ -55,7 +55,7 @@ class App extends Component {
           </div>
         </Node>
         
-        <Node label="node 2" x={500} y={200} width={nodeWidth} height={nodeHeight} id={2}>
+        <Node x={500} y={200} id={2}>
           <div style={nodeStyles}>
             Node 2a
             <InputPort />
@@ -63,7 +63,7 @@ class App extends Component {
           </div>
         </Node>
         
-        <Node label="node 3" x={900} y={300}  width={nodeWidth} height={nodeHeight}id={3}>
+        <Node x={900} y={300} id={3}>
           <div style={nodeStyles}>
             Node 3a
             <InputPort />
