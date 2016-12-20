@@ -30,14 +30,14 @@ const portStyles = {
   position: 'relative',
 };
 
-const InputPort = () => (
-  <Port type="input" x={0} y={portTop}>
+const InputPort = (props) => (
+  <Port type="input" x={0} y={portTop} {...props}>
     <div style={{ ...portStyles,  backgroundColor: '#8BC34A'}} />
   </Port>
 )
 
-const OutputPort = () => (
-  <Port type="output" x={nodeWidth} y={portTop} style={portStyles}>
+const OutputPort = (props) => (
+  <Port type="output" x={nodeWidth} y={portTop} style={portStyles} {...props}>
     <div style={{ ...portStyles,  backgroundColor: '#F44336'}} />
   </Port>
 )
@@ -50,29 +50,29 @@ class App extends Component {
         <Node x={100} y={100} id={1}>
           <div style={nodeStyles}>
             Node 1a
-            <InputPort />
-            <OutputPort />
+            <InputPort id="node1-input" />
+            <OutputPort id="node1-output" />
           </div>
         </Node>
         
         <Node x={500} y={200} id={2}>
           <div style={nodeStyles}>
             Node 2a
-            <InputPort />
-            <OutputPort />
+            <InputPort id="node2-input" />
+            <OutputPort id="node2-output" />
           </div>
         </Node>
         
         <Node x={900} y={300} id={3}>
           <div style={nodeStyles}>
             Node 3a
-            <InputPort />
-            <OutputPort />
+            <InputPort id="node3-input" />
+            <OutputPort id="node3-output" />
           </div>
         </Node>
         
-        <Link start={{x: 300, y: 125, node: 1}} end={{x: 500, y: 225, node: 2}} id={1} />
-        <Link start={{x: 700, y: 225, node: 2}} end={{x: 900, y: 325, node: 3}} id={2} />
+        {/*<Link start={{x: 300, y: 125, node: 1}} end={{x: 500, y: 225, node: 2}} id={1} />*/}
+        {/*<Link start={{x: 700, y: 225, node: 2}} end={{x: 900, y: 325, node: 3}} id={2} />*/}
       </Workflow>
     )
   }

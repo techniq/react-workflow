@@ -7,21 +7,22 @@ import Link from './Link';
 
 const defaultState = {
   nodes: {
-    meta: {
-      nextId: 1
-    },
+    meta: { nextId: 1 },
+    items: {}
+  },
+  ports: {
+    meta: { nextId: 1 },
     items: {}
   },
   links: {
-    meta: {
-      nextId: 1
-    },
+    meta: { nextId: 1 },
     items: {}
   }
 }
 
 const reducer = (state = defaultState, action) => {
   switch (action.type) {
+    
     case 'ADD_NODE': {
       const { id, ...props } = action.payload;
       return {
@@ -44,6 +45,23 @@ const reducer = (state = defaultState, action) => {
       const { id, deltaX, deltaY } = action.payload;
       const nodeItems = state.nodes.items;
       const node = nodeItems[id];
+
+      // Update ports related to node being moved
+      const portItems = Object.keys(state.ports.items).reduce((result, portId) => {
+        const port = state.ports.items[portId];
+        if (port.nodeId == id) {
+          result[portId] = {
+            ...port,
+            x: port.x + deltaX, 
+            y: port.y + deltaY
+          }
+        } else {
+          // unaffected
+          result[portId] = port;
+        }
+
+        return result;
+      }, {})
 
       // Update connected links to node being moved
       const linkItems = Object.keys(state.links.items).reduce((result, linkId) => {
@@ -87,6 +105,10 @@ const reducer = (state = defaultState, action) => {
             }
           }
         },
+        ports: {
+          ...state.ports,
+          items: portItems
+        },
         links: {
           ...state.links,
           items: linkItems
@@ -98,6 +120,18 @@ const reducer = (state = defaultState, action) => {
       const { id } = action.payload;
       const nodeItems = {...state.nodes.items};
       delete nodeItems[id];
+
+      // Delete ports asssociated with removed node
+      const portItems = Object.keys(state.ports.items).reduce((result, portId) => {
+        const port = state.ports.items[portId];
+        if (port.nodeId == id) {
+          // remove port
+        } else {
+          result[portId] = port;
+        }
+
+        return result;
+      }, {})
 
       // Delete links connected to removed node
       const linkItems = Object.keys(state.links.items).reduce((result, linkId) => {
@@ -116,6 +150,10 @@ const reducer = (state = defaultState, action) => {
         nodes: {
           ...state.nodes,
           items: nodeItems
+        },
+        ports: {
+          ...state.ports,
+          items: portItems
         },
         links: {
           ...state.links,
@@ -169,52 +207,69 @@ const reducer = (state = defaultState, action) => {
       }
     }
 
+    case 'ADD_PORT': {
+      const { id, ...props } = action.payload;
+      return {
+        ...state,
+        ports: {
+          ...state.ports,
+          meta: {
+            ...state.ports.meta,
+            nextId: state.ports.meta.nextId + 1
+          },
+          items: {
+            ...state.ports.items,
+            [id]: props
+          }
+        }
+      }
+    }
+
     case 'ATTACH_LINK': {
       const { id } = action.payload;
       const link = state.links.items[id];
 
       // Check each node to see if link's ends are close enough to attach
       const ATTACH_THRESHOLD = 10;
-      // TODO: Do not hard code width/height to determine location of node's connection points
-      const NODE_WIDTH = 200;
-      const NODE_HEIGHT = 50;
 
-      const startNodeId = Object.keys(state.nodes.items)
-        .filter(nodeId => {
-          const node = state.nodes.items[nodeId];
+      const startPortId = Object.keys(state.ports.items)
+        .filter(portId => {
+          const port = state.ports.items[portId];
           return (
-            Math.abs(link.start.x - node.x - NODE_WIDTH) < ATTACH_THRESHOLD && 
-            Math.abs(link.start.y - node.y - (NODE_HEIGHT / 2)) < ATTACH_THRESHOLD
+            port.type === 'output' &&
+            Math.abs(link.start.x - port.x) < ATTACH_THRESHOLD && 
+            Math.abs(link.start.y - port.y) < ATTACH_THRESHOLD
           )
         })[0];
 
-      const endNodeId = Object.keys(state.nodes.items)
-        .filter(nodeId => {
-          const node = state.nodes.items[nodeId];
+      const endPortId = Object.keys(state.ports.items)
+        .filter(portId => {
+          const port = state.ports.items[portId];
           return (
-            Math.abs(link.end.x - node.x) < ATTACH_THRESHOLD &&
-            Math.abs(link.end.y - node.y - (NODE_HEIGHT / 2)) < ATTACH_THRESHOLD
+            port.type === 'input' &&
+            Math.abs(link.end.x - port.x) < ATTACH_THRESHOLD && 
+            Math.abs(link.end.y - port.y) < ATTACH_THRESHOLD
           )
         })[0];
 
       let linkItems;
-      if (startNodeId && endNodeId) {
-        const startNode = state.nodes.items[startNodeId];
-        const endNode = state.nodes.items[endNodeId];
+      if (startPortId && endPortId) {
+        const startPort = state.ports.items[startPortId];
+        const endPort = state.ports.items[endPortId];
 
         linkItems = {
           ...state.links.items,
           [id]: {
             ...link,
             start: {
-              x: startNode.x + NODE_WIDTH,
-              y: startNode.y + (NODE_HEIGHT / 2),
-              node: startNodeId
+              x: startPort.x,
+              y: startPort.y,
+              node: startPort.nodeId
             },
             end: {
-              x: endNode.x,
-              y: endNode.y + (NODE_HEIGHT / 2),
-              node: endNodeId
+              x: endPort.x,
+              y: endPort.y,
+              node: endPort.nodeId
             }
           }
         };
@@ -241,22 +296,24 @@ const reducer = (state = defaultState, action) => {
 const store = createStore(reducer, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
 
 class Workflow extends Component {
-  componentWillMount() {
+  componentDidMount() {
     React.Children.forEach(this.props.children, child => {
       if (child.type.WrappedComponent.name === Node.WrappedComponent.name) {
+        const { children, ...props } = child.props;
         store.dispatch({
           type: 'ADD_NODE',
           payload: {
             id: child.id,
-            ...child.props
+            ...props
           }
         })
       } else if (child.type.WrappedComponent.name === Link.WrappedComponent.name) {
+        const { children, ...props } = child.props;
         store.dispatch({
           type: 'ADD_LINK',
           payload: {
             id: child.id,
-            ...child.props
+            ...props
           }
         })
       }

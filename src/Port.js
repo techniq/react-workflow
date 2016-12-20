@@ -7,6 +7,22 @@ class Port extends Component {
   static contextTypes = {
     node: PropTypes.object
   }
+
+  componentWillMount() {
+    const { id, x, y, type, dispatch } = this.props;
+    const { node } = this.context;
+
+    dispatch({
+      type: 'ADD_PORT',
+      payload: {
+        id,
+        type,
+        nodeId: node.props.id,
+        x: node.props.x + x,
+        y: node.props.y + y
+      }
+    })
+  }
   
   handleStart = (e, coords) => {
     e.stopPropagation();
@@ -82,5 +98,6 @@ class Port extends Component {
 export default connect(state => {
   return {
     nextLinkId: state.links.meta.nextId,
+    nextPortId: state.ports.meta.nextId,
   }
 })(Port);
