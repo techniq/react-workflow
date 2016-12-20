@@ -5,34 +5,6 @@ import Canvas from './Canvas';
 import Node from './Node';
 import Link from './Link';
 
-// const testState = {
-//   nodes: {
-//     meta: {
-//       nextId: 4
-//     },
-//     items: {
-//       1: { label: 'node 1', x: 100, y: 100 },
-//       2: { label: 'node 2', x: 500, y: 200 },
-//       3: { label: 'node 3', x: 900, y: 300 }
-//     }
-//   },
-//   links: {
-//     meta: {
-//       nextId: 3
-//     },
-//     items: {
-//       1: {
-//         start: { x: 300, y: 125, node: 1 },
-//         end:   { x: 500, y: 225, node: 2 }
-//       },
-//       2: {
-//         start: { x: 700, y: 225, node: 2 },
-//         end:   { x: 900, y: 325, node: 3 }
-//       }
-//     }
-//   },
-// }
-
 const defaultState = {
   nodes: {
     meta: {
