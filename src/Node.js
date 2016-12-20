@@ -1,7 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { DraggableCore } from 'react-draggable';
-import Port from './Port';
 
 class Node extends Component {
 
