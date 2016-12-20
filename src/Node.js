@@ -7,14 +7,14 @@ class Node extends Component {
 
   static childContextTypes = {
     node: PropTypes.object.isRequired
-  };
+  }
 
   getChildContext() {
     return {
       node: this
     }
   }
-  
+
   handleDrag = (e, { deltaX, deltaY }) => {
     this.props.dispatch({
       type: 'MOVE_NODE',
